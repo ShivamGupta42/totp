@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# Copyright (C) 2016 Jak Wings https://github.com/jakwings/totp
+# 
+#       TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+# 
+#  0. You just DO WHAT THE FUCK YOU WANT TO.
+
 # Better than nothing: http://www.in-ulm.de/~mascheck/various/set-e/
 set -euf +x
 

@@ -1,5 +1,0 @@
- Copyright (C) 2016 Jak Wings https://github.com/jakwings/bash-totp
-
-       TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
-
-  0. You just DO WHAT THE FUCK YOU WANT TO.
