@@ -86,7 +86,8 @@ EOT
     if [ '' != "${nul}" ]; then
       openssl dgst -sha1 -mac hmac -macopt "hexkey:${key}"
     else # especially for old versions from OSX/BSD!
-      openssl dgst -sha1 -hmac "$(echo "${key}" | hex_unpack)"
+      key="$(echo "${key}" | hex_unpack && printf x)"
+      openssl dgst -sha1 -hmac "${key%x}"
     fi
   } | cut -d' ' -f2
 )
