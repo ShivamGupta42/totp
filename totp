@@ -96,7 +96,7 @@ gen_token() (
   set -e
 
   case "${1-}" in (help|-h*|--help|--help=*|-\?*)
-    help; exit 1
+    help >&3; exit 1
   esac
 
   server="${1-Google}"
