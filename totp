@@ -82,7 +82,7 @@ gen_digest() (
 # https://tools.ietf.org/html/rfc6238
 #{
   case "${1-}" in (help|-h*|--help|--help=*|-\?*)
-    help >&3; exit 1
+    help >&3; exit 0
   esac
 
   server="${1-Google}"
@@ -131,7 +131,7 @@ gen_digest() (
       [ 33 -ge "${offset}" ] || exit 4
       # Read a 32-bit positive integer and take at most six rightmost digits.
       nibble="$(printf "%.${offset}s" "${digest}")"
-      number="0x$(printf "%.8s" "${digest#"${nibble}"}")"
+      number="0x$(printf '%.8s' "${digest#"${nibble}"}")"
       token="$(( (number & 0x7FFFFFFF) % 1000000 ))"
       # Pad the token number with leading zeros if needed.
       printf '%06d\n' "${token}" >&3
