@@ -120,6 +120,7 @@ pcg_srand() {
   RANDOM="$1"
 }
 pcg_rand() {
+  # shellcheck disable=SC2039,SC3028
   pcg_number="${RANDOM}"
 }
 fi
