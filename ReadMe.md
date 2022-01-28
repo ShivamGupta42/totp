@@ -1,9 +1,8 @@
-Requirements:
+[![tested with sh, bash, dash, yash, mksh, oksh, zsh](https://github.com/jakwings/totp/actions/workflows/test.yml/badge.svg)](https://github.com/jakwings/totp/actions/workflows/test.yml)
 
-    * openssl
-    * base32 (maybe from GNU coreutils)
+The only dependency is `openssl`.
 
-You are recommended to use it with "pass" from https://www.passwordstore.org/
+You are recommended to use it with `pass` from https://www.passwordstore.org/
 
 For example, to get the token for two-factor authentication:
 

@@ -1,0 +1,77 @@
+# https://github.com/actions/checkout
+# https://docs.github.com/actions/using-workflows
+
+name: './test.sh # sh bash dash yash mksh oksh zsh'
+
+on: [push, pull_request]
+
+jobs:
+  ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Shells
+        run: sudo apt-get install openssl shellcheck dash yash ksh mksh zsh coreutils
+      - name: shellcheck
+        run: |
+          for sh in sh dash bash ksh; do
+            shellcheck -o all -s "${sh}" totp test.sh
+          done
+      - name: ./test.sh
+        run: DO_SH= ./test.sh
+      - name: sh test.sh
+        run: DO_SH=sh sh test.sh
+      - name: bash test.sh
+        run: DO_SH=bash bash test.sh
+      - name: dash test.sh
+        run: DO_SH=dash dash test.sh
+      - name: yash test.sh
+        run: |
+          DO_SH=yash yash test.sh
+          #DO_SH=yash DO_SH_OPTS='-o posixly_correct' yash -o posixly_correct test.sh
+      - name: ksh test.sh
+        run: DO_SH=ksh ksh test.sh
+      - name: mksh test.sh
+        run: DO_SH=mksh mksh test.sh
+      #- name: oksh test.sh
+      #  run: DO_SH=oksh oksh test.sh
+      - name: zsh test.sh
+        run: |
+          DO_SH=zsh zsh test.sh
+          #ln -s -f "$(command -v zsh)" ./sh
+          #DO_SH="${PWD}/sh" ./sh test.sh
+
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Shells
+        run: brew install shellcheck dash yash mksh oksh coreutils
+      - name: shellcheck
+        run: |
+          for sh in sh dash bash ksh; do
+            shellcheck -o all -s "${sh}" totp test.sh
+          done
+      - name: ./test.sh
+        run: DO_SH= ./test.sh
+      - name: sh test.sh
+        run: DO_SH=sh sh test.sh
+      - name: bash test.sh
+        run: DO_SH=bash bash test.sh
+      - name: dash test.sh
+        run: DO_SH=dash dash test.sh
+      - name: yash test.sh
+        run: |
+          DO_SH=yash yash test.sh
+          #DO_SH=yash DO_SH_OPTS='-o posixly_correct' yash -o posixly_correct test.sh
+      - name: ksh test.sh
+        run: DO_SH=ksh ksh test.sh
+      - name: mksh test.sh
+        run: DO_SH=mksh mksh test.sh
+      - name: oksh test.sh
+        run: DO_SH=oksh oksh test.sh
+      - name: zsh test.sh
+        run: |
+          DO_SH=zsh zsh test.sh
+          #ln -s -f "$(command -v zsh)" ./sh
+          #DO_SH="${PWD}/sh" ./sh test.sh

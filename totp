@@ -12,8 +12,11 @@ set -euf +x
 # copy-able text should go to fd 3
 exec 3>&1 1>&2
 
-LC_ALL=C
-export LC_ALL
+export LC_ALL=C
+unset IFS  # also unexport
+
+EOL='
+'
 
 help() {
   printf '%s' 'totp -- Time-based One-time Password Generator
@@ -26,22 +29,20 @@ Timestamp is the seconds since 1970-01-01 00:00:00 UTC.
 Supported servers: Google, GitHub, GitLab, Bitbucket
 '
 }
+
 echo() {
   printf '%s\n' "$*"
 }
 ekho() {
-  printf '\n[totp] %s\n\n' "$*"
+  printf '\n[Error] %s\n' "$*"
 }
-have() {
-  [ -x "$(command -v "$1" 2>/dev/null)" ]
+die() {
+  if [ 0 -lt "$#" ]; then ekho "$@" >&2; fi
+  exit 1
 }
 
-bin2hex() {
-  if have xxd; then
-    xxd -p | tr -cd 0-9A-Fa-f
-  else
-    od -A n -t x1 -v | tr -cd 0-9A-Fa-f
-  fi
+have() {
+  [ -x "$(command -v "$1" 2>/dev/null)" ]
 }
 
 hex2bin() {
@@ -55,6 +56,29 @@ hex2bin() {
     esac
   done
 }
+
+# https://datatracker.ietf.org/doc/html/rfc4648
+base32decode2hex() (
+  alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
+  input="$(printf '%s' $*)"
+  [ 0 -ne "${#input}" ] || return 0
+  [ 0 -eq "$(( ${#input} % 8 ))" ] || die 'base32: invalid input'
+  case "${input}" in (*[!"${alphabet}"=]*) die 'base32: invalid input'; esac
+  input="${input%%=*}" bite=0 bits=0
+  while [ 0 -lt "${#input}" ]; do
+    s="${alphabet%%"${input%"${input#?}"}"*}"
+    i="${#s}"
+    bite="$(( (bite << 5) | i ))"
+    bits="$(( bits + 5 ))"
+    if [ 8 -le "${bits}" ]; then
+      byte="$(( bite >> (bits - 8) ))"
+      printf '%02x' "${byte}"
+      bite="$(( bite - (byte << (bits - 8)) ))"
+      bits="$(( bits - 8 ))"
+    fi
+    input="${input#?}"
+  done
+)
 
 gen_digest() (
   set -e
@@ -79,7 +103,7 @@ gen_digest() (
   echo "${digest##*' '}"
 )
 
-# https://tools.ietf.org/html/rfc6238
+# https://datatracker.ietf.org/doc/html/rfc6238
 #{
   case "${1-}" in (help|-h*|--help|--help=*|-\?*)
     help >&3; exit 0
@@ -96,19 +120,20 @@ gen_digest() (
 
   err=''
   if [ '' = "${secret}" ]; then
-    ekho 'The secret token was empty!'; err=1
+    err="${err}${EOL}The secret token was empty!"
   fi
   if [ 0 -ge "${interval}" ]; then
-    ekho 'The interval could not be recognized as a positive integer!'; err=1
+    err="${err}${EOL}interval was not a valid positive integer: \"${interval}\""
   fi
-  if ! { [ 0 -le "${now}" ] || [ 0 -ge "${now}" ]; }; then
-    ekho 'The timestamp could not be recognized as an integer!'; err=1
+  if ! { [ 0 -le "${now}" ] || [ 0 -ge "${now}" ]; } 2>/dev/null; then
+    err="${err}${EOL}timestamp was not a valid integer: \"${now}\""
   fi
-  if [ '' != "${err}" ]; then
-    help; exit 1
+  if [ 0 -lt "${#err}" ]; then
+    help
+    IFS="${EOL}"
+    for msg in $err; do ekho "${msg}"; done
+    die
   fi
-
-  server="$(echo "${server}" | tr A-Z a-z)"
 
   # remove whitespace and leading zeros and number sign
   interval="$(( ${interval#"${interval%%[1-9]*}"} + 0 ))"
@@ -120,8 +145,12 @@ gen_digest() (
 
   case "${server}" in
     # https://github.com/google/google-authenticator/wiki/Key-Uri-Format
-    (google|github|gitlab|bitbucket)
-      key="$(printf '%s' $secret | base32 -d | bin2hex)"
+    ([gG][oO][oO][gG][lL][eE]\
+    |[gG][iI][tT][hH][uU][bB]\
+    |[gG][iI][tT][lL][aA][bB]\
+    |[bB][iI][tT][bB][uU][cC][kK][eE][tT]\
+    )
+      key="$(base32decode2hex "${secret}")"
       [ 0 -lt "${#key}" ] || exit 2
       # The digest is a 160-bit hexadecimal number string.
       digest="$(gen_digest "${key}" "${period}")"
@@ -137,7 +166,7 @@ gen_digest() (
       printf '%06d\n' "${token}" >&3
       ;;
     (*)
-      ekho "Your server is not supported: ${server}"
-      help; exit 1
+      help
+      die "Your server is not supported: \"${server}\""
   esac
 #}
