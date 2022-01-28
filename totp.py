@@ -39,7 +39,7 @@ def hotp(key, counter, digits=6, digest='sha1'):
     return str(binary)[-digits:].zfill(digits)
 
 def totp(key, interval=30, now=time.time()):
-    return hotp(key, int(now / interval), 6, 'sha1')
+    return hotp(''.join(key.split()), int(now / interval), 6, 'sha1')
 
 def main():
     args = [int(x) if x.isdigit() else x for x in sys.argv[1:]]

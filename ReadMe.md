@@ -1,6 +1,6 @@
 [![tested with sh, bash, dash, yash, mksh, oksh, zsh](https://github.com/jakwings/totp/actions/workflows/test.yml/badge.svg)](https://github.com/jakwings/totp/actions/workflows/test.yml)
 
-The only dependencies are `date` and `openssl`.
+The only dependencies are `cat`, `date` and `openssl`.
 
 You are recommended to use it with `pass` from https://www.passwordstore.org/
 
