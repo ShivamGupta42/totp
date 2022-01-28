@@ -115,6 +115,13 @@ pcg_rand() {
     pcg32si_random_r  # [0 - 2^31, 2^31 - 1] <=> [0, 2^32 - 1]
   fi
 }
+else  # just a hack for testing with ksh
+pcg_srand() {
+  RANDOM="$1"
+}
+pcg_rand() {
+  pcg_number="${RANDOM}"
+}
 fi
 pcg_clear() {
   unset -v pcg_state pcg_number pcg_max

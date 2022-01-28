@@ -41,10 +41,6 @@ die() {
   exit 1
 }
 
-have() {
-  [ -x "$(command -v "$1" 2>/dev/null)" ]
-}
-
 hex2bin() {
   while [ 0 -lt "${#1}" ]; do
     case "$1" in
