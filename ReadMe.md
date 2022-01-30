@@ -1,4 +1,4 @@
-[![tested with sh, bash, dash, yash, mksh, oksh, zsh](https://github.com/jakwings/totp/actions/workflows/test.yml/badge.svg)](https://github.com/jakwings/totp/actions/workflows/test.yml)
+[![tested with sh, bash, dash, yash, ksh, mksh, oksh, zsh](https://github.com/jakwings/totp/actions/workflows/test.yml/badge.svg)](https://github.com/jakwings/totp/actions/workflows/test.yml)
 
 The only dependencies are `cat`, `date` and `openssl`.
 

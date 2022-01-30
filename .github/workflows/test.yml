@@ -1,7 +1,7 @@
 # https://github.com/actions/checkout
 # https://docs.github.com/actions/using-workflows
 
-name: './test.sh # sh bash dash yash mksh oksh zsh'
+name: './test.sh # sh bash dash yash ksh mksh oksh zsh'
 
 on: [push, pull_request]
 
