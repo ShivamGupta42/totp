@@ -59,7 +59,9 @@ base32decode2hex() (
   input="$(printf '%s' $*)"
   [ 0 -ne "${#input}" ] || return 0
   [ 0 -eq "$(( ${#input} % 8 ))" ] || die 'base32: invalid input'
-  case "${input}" in (*[!"${alphabet}"=]*) die 'base32: invalid input'; esac
+  case "${input}" in (*[!"${alphabet}"=]*|*=[!=]*)
+    die 'base32: invalid input'
+  esac
   input="${input%%=*}" bite=0 bits=0
   while [ 0 -lt "${#input}" ]; do
     s="${alphabet%%"${input%"${input#?}"}"*}"
