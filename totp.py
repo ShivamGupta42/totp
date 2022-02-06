@@ -31,10 +31,7 @@ def hotp(key, counter, digits=6, digest='sha1'):
     key = base64.b32decode(key.upper() + '=' * ((8 - len(key)) % 8))
     counter = struct.pack('>Q', counter)
     mac = hmac.new(key, counter, hashlib.__dict__[digest]).digest()
-    if type(mac[-1]) == int:
-        offset = mac[-1] & 0x0F
-    else:
-        offset = struct.unpack('>B', mac[-1])[0] & 0x0F
+    offset = struct.unpack('>B', mac[-1:])[0] & 0x0F
     binary = struct.unpack('>L', mac[offset:offset+4])[0] & 0x7FFFFFFF
     return str(binary)[-digits:].zfill(digits)
 
