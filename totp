@@ -114,10 +114,11 @@ gen_digest() (
   if [ -t 0 ]; then
     echo "Enter your secret token: (Press Ctrl-D once/twice to Quit)"
   fi
-  secret="$(cat)"
+  unset -v key  # unexport
+  key="$(cat)"
 
   err=''
-  if [ '' = "${secret}" ]; then
+  if [ '' = "${key}" ]; then
     err="${err}${EOL}The secret token was empty!"
   fi
   if [ 0 -ge "${interval}" ]; then
@@ -142,13 +143,13 @@ gen_digest() (
   period="$(( now / interval ))"
 
   case "${server}" in
-    # https://github.com/google/google-authenticator/wiki/Key-Uri-Format
     ([gG][oO][oO][gG][lL][eE]\
     |[gG][iI][tT][hH][uU][bB]\
     |[gG][iI][tT][lL][aA][bB]\
     |[bB][iI][tT][bB][uU][cC][kK][eE][tT]\
     )
-      key="$(base32decode2hex "${secret}")"
+      # https://github.com/google/google-authenticator/wiki/Key-Uri-Format
+      key="$(base32decode2hex "${key}")"
       [ 0 -lt "${#key}" ] || exit 2
       # The digest is a 160-bit hexadecimal number string.
       digest="$(gen_digest "${key}" "${period}")"
