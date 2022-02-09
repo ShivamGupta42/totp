@@ -48,7 +48,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install Shells
-        run: brew install shellcheck dash yash mksh oksh coreutils
+        run: brew install shellcheck yash mksh oksh coreutils
       - name: Shellcheck
         run: |
           for sh in sh dash bash ksh; do
