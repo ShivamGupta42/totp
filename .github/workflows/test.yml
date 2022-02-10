@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install Shells
-        run: sudo apt-get install openssl shellcheck dash yash ksh mksh zsh
+        run: sudo apt-get install openssl shellcheck dash yash ksh mksh zsh coreutils
       - name: Shellcheck
         run: |
           for sh in sh dash bash ksh; do
@@ -48,7 +48,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install Shells
-        run: brew install shellcheck yash mksh oksh
+        run: brew install shellcheck yash mksh oksh coreutils
       - name: Shellcheck
         run: |
           for sh in sh dash bash ksh; do
