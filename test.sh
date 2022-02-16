@@ -145,3 +145,5 @@ while [ 0 -le "$(( i -= 1 ))" ]; do
   answer2="$(printf '%s' "${secret}" | totp_sh Google "${interval}" "${now}")"
   [ x"${answer1}" = x"${answer2}" ] || die "LOOP#${i}"
 done
+
+echo '[TEST] ALL TESTS PASSED'

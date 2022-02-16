@@ -7,13 +7,13 @@
 #  0. You just DO WHAT THE FUCK YOU WANT TO.
 
 # Better than nothing: http://www.in-ulm.de/~mascheck/various/set-e/
-set -euf +x
+set -euf +x  # -x would show the secret token
 
 # copy-able text should go to fd 3
 exec 3>&1 1>&2
 
 export LC_ALL=C
-unset IFS  # also unexport
+unset -v IFS  # reset to default value, also unexport
 
 EOL='
 '
@@ -54,11 +54,14 @@ hex2bin() {
 }
 
 # https://datatracker.ietf.org/doc/html/rfc4648
+# fast enough for short strings
 base32decode2hex() (
-  alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
+  set -e
+  unset -v input alphabet bite bits s i  # unexport
   input="$(printf '%s' $*)"
   [ 0 -ne "${#input}" ] || return 0
   [ 0 -eq "$(( ${#input} % 8 ))" ] || die 'base32: invalid input'
+  alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
   case "${input}" in (*[!"${alphabet}"=]*|*=[!=]*)
     die 'base32: invalid input'
   esac
